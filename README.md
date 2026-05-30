@@ -20,12 +20,6 @@ Restrict WooCommerce product visibility and purchasing by WordPress user role.
 4. Choose the default approved role. If an `artist` role exists, it is selected by default.
 5. Edit a WooCommerce product, enable **Restrict by role**, and choose the approved roles.
 
-## Artist Approval Workflows
-
-This plugin is intentionally generic. It does not depend on AEA Artist Invites or any specific approval plugin.
-
-For an artist application workflow, keep the approval system responsible for moving approved users into the `artist` role. This plugin then uses that role to decide whether those users can see or buy restricted products.
-
 ## Bricks Query Loops
 
 Restricted products are hidden from Bricks query loops by default, even for approved users. This keeps general product grids clean.
