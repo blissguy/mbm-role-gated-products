@@ -113,7 +113,7 @@ final class MBM_RGP_Cart_Protection {
 			return $result;
 		}
 
-		$product_id = $this->get_store_api_product_id_from_route( (string) $request->get_route() );
+		$product_id = $this->get_store_api_product_gate_id_from_route( (string) $request->get_route() );
 		if ( ! $product_id || $this->access->can_view_product( $product_id ) ) {
 			return $result;
 		}
@@ -137,12 +137,32 @@ final class MBM_RGP_Cart_Protection {
 		return $message ? $message : __( 'An item was removed from your cart because it is no longer available to your account.', 'mbm-role-gated-products' );
 	}
 
-	private function get_store_api_product_id_from_route( $route ) {
-		if ( ! preg_match( '#^/wc/store/v[0-9]+/products/(\\d+)(?:/|$)#', $route, $matches ) ) {
+	private function get_store_api_product_gate_id_from_route( $route ) {
+		if ( ! preg_match( '#^/wc/store(?:/v[0-9]+)?/products/([^/]+)/?$#', $route, $matches ) ) {
 			return 0;
 		}
 
-		return absint( $matches[1] );
+		$identifier = rawurldecode( (string) $matches[1] );
+		if ( '' === $identifier || $this->is_reserved_store_api_product_segment( $identifier ) ) {
+			return 0;
+		}
+
+		$product = false;
+		if ( ctype_digit( $identifier ) && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( absint( $identifier ) );
+		} elseif ( function_exists( 'get_page_by_path' ) && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( get_page_by_path( sanitize_title( $identifier ), OBJECT, array( 'product', 'product_variation' ) ) );
+		}
+
+		return $product ? $this->get_product_gate_id( $product ) : 0;
+	}
+
+	private function is_reserved_store_api_product_segment( $segment ) {
+		return in_array(
+			sanitize_key( $segment ),
+			array( 'attributes', 'brands', 'categories', 'collection-data', 'reviews', 'tags' ),
+			true
+		);
 	}
 
 	private function get_product_gate_id( $product ) {

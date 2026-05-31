@@ -66,6 +66,14 @@ final class MBM_RGP_Query_Filter {
 			return $query_vars;
 		}
 
+		$post_in = isset( $query_vars['post__in'] ) ? $this->normalize_id_list( $query_vars['post__in'] ) : array();
+		if ( ! empty( $post_in ) ) {
+			$remaining              = array_values( array_diff( $post_in, $this->normalize_id_list( $exclude ) ) );
+			$query_vars['post__in'] = ! empty( $remaining ) ? $remaining : array( 0 );
+
+			return $query_vars;
+		}
+
 		$existing                    = isset( $query_vars['post__not_in'] ) ? (array) $query_vars['post__not_in'] : array();
 		// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- Required to hide restricted products from Bricks query loops.
 		$query_vars['post__not_in'] = array_values( array_unique( array_merge( array_map( 'absint', $existing ), $exclude ) ) );
@@ -113,7 +121,19 @@ final class MBM_RGP_Query_Filter {
 			return;
 		}
 
-		$existing = (array) $query->get( 'post__not_in' );
-		$query->set( 'post__not_in', array_values( array_unique( array_merge( array_map( 'absint', $existing ), $hidden ) ) ) );
+		$post_in = $this->normalize_id_list( $query->get( 'post__in' ) );
+		if ( ! empty( $post_in ) ) {
+			$remaining = array_values( array_diff( $post_in, $hidden ) );
+			$query->set( 'post__in', ! empty( $remaining ) ? $remaining : array( 0 ) );
+
+			return;
+		}
+
+		$existing = $this->normalize_id_list( $query->get( 'post__not_in' ) );
+		$query->set( 'post__not_in', array_values( array_unique( array_merge( $existing, $hidden ) ) ) );
+	}
+
+	private function normalize_id_list( $ids ) {
+		return array_values( array_unique( array_filter( array_map( 'absint', (array) $ids ) ) ) );
 	}
 }
