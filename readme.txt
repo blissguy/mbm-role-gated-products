@@ -14,8 +14,6 @@ Restrict WooCommerce product visibility and purchasing by WordPress user role.
 
 MBM Role-Gated Products for WooCommerce adds per-product role restrictions and enforces them across product listings, search, Bricks query loops, direct product URLs, add-to-cart requests, the Store API, and checkout.
 
-The plugin is generic and reusable. Approval workflows can integrate by assigning users to the role that restricted products allow.
-
 Bricks query loops hide restricted products by default. Enable the element-level Show restricted products control when a specific loop should include restricted products for approved viewers.
 
 == Installation ==
@@ -27,10 +25,6 @@ Bricks query loops hide restricted products by default. Enable the element-level
 5. Enable role restrictions on individual WooCommerce products.
 
 == Frequently Asked Questions ==
-
-= Does this require the AEA Artist Invites plugin? =
-
-No. It works with any WordPress role. If an approval workflow moves users into an `artist` role, products can be restricted to that role.
 
 = Are restricted products only hidden in the UI? =
 
