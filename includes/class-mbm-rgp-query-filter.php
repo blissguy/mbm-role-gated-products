@@ -36,6 +36,10 @@ final class MBM_RGP_Query_Filter {
 			return;
 		}
 
+		if ( $this->is_main_product_page_query( $query ) ) {
+			return;
+		}
+
 		$targets_products = false;
 
 		if ( $query->is_main_query() && $query->is_search() ) {
@@ -135,5 +139,21 @@ final class MBM_RGP_Query_Filter {
 
 	private function normalize_id_list( $ids ) {
 		return array_values( array_unique( array_filter( array_map( 'absint', (array) $ids ) ) ) );
+	}
+
+	private function is_main_product_page_query( $query ) {
+		if ( ! $query->is_main_query() ) {
+			return false;
+		}
+
+		if ( $query->is_singular( 'product' ) ) {
+			return true;
+		}
+
+		if ( 'product' !== $query->get( 'post_type' ) ) {
+			return false;
+		}
+
+		return (bool) ( $query->get( 'name' ) || $query->get( 'p' ) || $query->get( 'product' ) );
 	}
 }
