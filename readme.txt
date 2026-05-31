@@ -1,5 +1,5 @@
 === MBM Role-Gated Products for WooCommerce ===
-Contributors: mixbusmarketing
+Contributors: emmanuelkuebu, mixbusmarketing
 Tags: woocommerce, roles, products, access-control
 Requires at least: 6.5
 Tested up to: 7.0
