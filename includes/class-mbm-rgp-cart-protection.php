@@ -23,6 +23,7 @@ final class MBM_RGP_Cart_Protection {
 		add_action( 'woocommerce_store_api_validate_add_to_cart', array( $this, 'block_store_api_add_to_cart' ), 10, 2 );
 		add_action( 'woocommerce_check_cart_items', array( $this, 'purge_restricted_cart_items' ) );
 		add_action( 'template_redirect', array( $this, 'block_single_product' ) );
+		add_filter( 'rest_pre_dispatch', array( $this, 'block_store_api_product_read' ), 10, 3 );
 	}
 
 	public function block_classic_add_to_cart( $passed, $product_id ) {
@@ -100,6 +101,30 @@ final class MBM_RGP_Cart_Protection {
 		nocache_headers();
 	}
 
+	public function block_store_api_product_read( $result, $server, $request ) {
+		unset( $server );
+
+		if ( null !== $result || ! is_object( $request ) || ! is_callable( array( $request, 'get_route' ) ) ) {
+			return $result;
+		}
+
+		$method = is_callable( array( $request, 'get_method' ) ) ? strtoupper( (string) $request->get_method() ) : 'GET';
+		if ( ! in_array( $method, array( 'GET', 'HEAD' ), true ) ) {
+			return $result;
+		}
+
+		$product_id = $this->get_store_api_product_gate_id_from_route( (string) $request->get_route() );
+		if ( ! $product_id || $this->access->can_view_product( $product_id ) ) {
+			return $result;
+		}
+
+		return new WP_Error(
+			'mbm_rgp_product_restricted',
+			esc_html__( 'Product not found.', 'mbm-role-gated-products' ),
+			array( 'status' => 404 )
+		);
+	}
+
 	private function get_add_to_cart_message() {
 		$message = (string) $this->settings->get_value( 'add_to_cart_message' );
 
@@ -110,6 +135,34 @@ final class MBM_RGP_Cart_Protection {
 		$message = (string) $this->settings->get_value( 'cart_removed_message' );
 
 		return $message ? $message : __( 'An item was removed from your cart because it is no longer available to your account.', 'mbm-role-gated-products' );
+	}
+
+	private function get_store_api_product_gate_id_from_route( $route ) {
+		if ( ! preg_match( '#^/wc/store(?:/v[0-9]+)?/products/([^/]+)/?$#', $route, $matches ) ) {
+			return 0;
+		}
+
+		$identifier = rawurldecode( (string) $matches[1] );
+		if ( '' === $identifier || $this->is_reserved_store_api_product_segment( $identifier ) ) {
+			return 0;
+		}
+
+		$product = false;
+		if ( ctype_digit( $identifier ) && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( absint( $identifier ) );
+		} elseif ( function_exists( 'get_page_by_path' ) && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( get_page_by_path( sanitize_title( $identifier ), OBJECT, array( 'product', 'product_variation' ) ) );
+		}
+
+		return $product ? $this->get_product_gate_id( $product ) : 0;
+	}
+
+	private function is_reserved_store_api_product_segment( $segment ) {
+		return in_array(
+			sanitize_key( $segment ),
+			array( 'attributes', 'brands', 'categories', 'collection-data', 'reviews', 'tags' ),
+			true
+		);
 	}
 
 	private function get_product_gate_id( $product ) {
