@@ -4,7 +4,7 @@ Tags: woocommerce, roles, products, access-control
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,10 @@ Bricks query loops hide restricted products by default. Enable the element-level
 No. The plugin enforces access server-side for product pages, add-to-cart requests, Store API requests, cart validation, and product queries.
 
 == Changelog ==
+
+= 1.0.2 =
+
+Fix configured redirects for restricted single product pages.
 
 = 1.0.1 =
 
