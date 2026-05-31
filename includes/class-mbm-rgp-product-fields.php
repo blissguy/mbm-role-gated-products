@@ -60,7 +60,7 @@ final class MBM_RGP_Product_Fields {
 		}
 
 		echo '</select>';
-		echo '<span class="description">' . esc_html__( 'If no role is selected, the product is locked for every customer-facing role.', 'mbm-role-gated-products' ) . '</span>';
+		echo '<span class="description" style="display:block;margin:6px 0 0;max-width:50%;">' . esc_html__( 'If no role is selected, the product is locked for every customer-facing role.', 'mbm-role-gated-products' ) . '</span>';
 		echo '</p>';
 
 		echo '</div>';
