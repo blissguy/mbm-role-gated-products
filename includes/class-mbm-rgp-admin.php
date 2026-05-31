@@ -38,7 +38,7 @@ final class MBM_RGP_Admin {
 		$detail = $labels
 			? sprintf(
 				/* translators: %s: comma-separated role labels. */
-				__( 'Visible only to: %s. Everyone else receives 404 error.', 'mbm-role-gated-products' ),
+				__( 'Visible and available only to approved role(s): %s', 'mbm-role-gated-products' ),
 				implode( ', ', $labels )
 			)
 			: __( 'No approved roles are set, so this is hidden from every customer-facing role.', 'mbm-role-gated-products' );
