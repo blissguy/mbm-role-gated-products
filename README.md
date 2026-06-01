@@ -1,4 +1,4 @@
-# MBM Role-Gated Products for WooCommerce
+# Role-Gated Products for WooCommerce
 
 Restrict WooCommerce product visibility and purchasing by WordPress user role.
 
