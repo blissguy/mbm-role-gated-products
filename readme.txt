@@ -34,7 +34,7 @@ No. The plugin enforces access server-side for product pages, add-to-cart reques
 
 = 1.0.2 =
 
-Fix configured redirects for restricted single product pages.
+Fix restricted single product redirects and prevent canonical redirects from exposing restricted product permalinks.
 
 = 1.0.1 =
 
