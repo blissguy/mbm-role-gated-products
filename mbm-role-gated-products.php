@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MBM Role-Gated Products for WooCommerce
  * Description: Restrict WooCommerce product visibility and purchasing by WordPress user role.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: MixBus Marketing
  * Author URI: https://mixbusmarketing.com/
  * License: GPLv2 or later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MBM_RGP_VERSION', '1.0.1' );
+define( 'MBM_RGP_VERSION', '1.0.2' );
 define( 'MBM_RGP_FILE', __FILE__ );
 define( 'MBM_RGP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MBM_RGP_URL', plugin_dir_url( __FILE__ ) );
