@@ -86,6 +86,8 @@ final class MBM_RGP_Cart_Protection {
 			return;
 		}
 
+		remove_action( 'template_redirect', 'redirect_canonical' );
+
 		$settings = $this->settings->get();
 		if ( 'redirect' === $settings['blocked_behavior'] && ! empty( $settings['redirect_url'] ) ) {
 			$redirect_url = wp_validate_redirect( $settings['redirect_url'], '' );
