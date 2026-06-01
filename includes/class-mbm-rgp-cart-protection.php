@@ -22,7 +22,7 @@ final class MBM_RGP_Cart_Protection {
 		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'block_classic_add_to_cart' ), 10, 2 );
 		add_action( 'woocommerce_store_api_validate_add_to_cart', array( $this, 'block_store_api_add_to_cart' ), 10, 2 );
 		add_action( 'woocommerce_check_cart_items', array( $this, 'purge_restricted_cart_items' ) );
-		add_action( 'template_redirect', array( $this, 'block_single_product' ) );
+		add_action( 'template_redirect', array( $this, 'block_single_product' ), 0 );
 		add_filter( 'rest_pre_dispatch', array( $this, 'block_store_api_product_read' ), 10, 3 );
 	}
 
