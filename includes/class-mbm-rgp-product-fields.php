@@ -25,6 +25,12 @@ final class MBM_RGP_Product_Fields {
 		add_action( 'trashed_post', array( $this, 'flush_cache' ) );
 		add_action( 'untrashed_post', array( $this, 'flush_cache' ) );
 		add_action( 'deleted_post', array( $this, 'flush_cache' ) );
+
+		// Restrictions written outside the product screen -- imports, WP-CLI,
+		// bulk scripts, the REST API -- must invalidate the cache too.
+		add_action( 'added_post_meta', array( $this, 'flush_cache_on_meta_change' ), 10, 3 );
+		add_action( 'updated_post_meta', array( $this, 'flush_cache_on_meta_change' ), 10, 3 );
+		add_action( 'deleted_post_meta', array( $this, 'flush_cache_on_meta_change' ), 10, 3 );
 	}
 
 	public function render_fields() {
@@ -91,11 +97,36 @@ final class MBM_RGP_Product_Fields {
 		}
 
 		update_post_meta( $product_id, MBM_RGP_Plugin::META_ALLOWED_ROLES, $roles );
-		$this->access->flush_cache();
+		$this->restriction_changed( $product_id );
 	}
 
-	public function flush_cache() {
+	public function flush_cache( $post_id = 0 ) {
+		$this->restriction_changed( $post_id );
+	}
+
+	public function flush_cache_on_meta_change( $meta_id, $object_id, $meta_key ) {
+		unset( $meta_id );
+
+		$watched = array( MBM_RGP_Plugin::META_RESTRICT_ENABLED, MBM_RGP_Plugin::META_ALLOWED_ROLES );
+		if ( ! in_array( $meta_key, $watched, true ) ) {
+			return;
+		}
+
+		$this->restriction_changed( $object_id );
+	}
+
+	private function restriction_changed( $product_id ) {
 		$this->access->flush_cache();
+
+		$product_id = absint( $product_id );
+		if ( $product_id && 'product' === get_post_type( $product_id ) ) {
+			/**
+			 * Fires when a product's role restrictions may have changed.
+			 *
+			 * @param int $product_id Product ID.
+			 */
+			do_action( 'mbm_rgp_product_restriction_changed', $product_id );
+		}
 	}
 
 	private function get_saved_or_default_roles( $product_id ) {

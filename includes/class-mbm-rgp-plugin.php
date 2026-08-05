@@ -24,6 +24,8 @@ final class MBM_RGP_Plugin {
 	private $product_fields;
 	private $query_filter;
 	private $cart_protection;
+	private $redirect_guard;
+	private $cache;
 	private $admin;
 
 	public static function instance() {
@@ -70,11 +72,15 @@ final class MBM_RGP_Plugin {
 		$this->product_fields  = new MBM_RGP_Product_Fields( $this->settings, $this->access );
 		$this->query_filter    = new MBM_RGP_Query_Filter( $this->access );
 		$this->cart_protection = new MBM_RGP_Cart_Protection( $this->settings, $this->access );
+		$this->redirect_guard  = new MBM_RGP_Redirect_Guard( $this->access );
+		$this->cache           = new MBM_RGP_Cache( $this->access );
 		$this->admin           = new MBM_RGP_Admin( $this->settings, $this->access );
 
 		$this->product_fields->hooks();
 		$this->query_filter->hooks();
 		$this->cart_protection->hooks();
+		$this->redirect_guard->hooks();
+		$this->cache->hooks();
 		$this->admin->hooks();
 	}
 
@@ -84,6 +90,8 @@ final class MBM_RGP_Plugin {
 		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-product-fields.php';
 		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-query-filter.php';
 		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-cart-protection.php';
+		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-redirect-guard.php';
+		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-cache.php';
 		require_once MBM_RGP_PATH . 'includes/class-mbm-rgp-admin.php';
 	}
 
@@ -119,7 +127,7 @@ final class MBM_RGP_Plugin {
 		}
 
 		echo '<div class="notice notice-error"><p>';
-		esc_html_e( 'MBM Role-Gated Products for WooCommerce requires WooCommerce to be active.', 'mbm-role-gated-products' );
+		esc_html_e( 'Role-Gated Products for WooCommerce requires WooCommerce to be active.', 'mbm-role-gated-products' );
 		echo '</p></div>';
 	}
 }
