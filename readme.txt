@@ -4,7 +4,7 @@ Tags: woocommerce, roles, products, access-control
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,10 @@ If a restricted product was already cached before you restricted it, clear your 
 A redirect plugin is answering the hidden page's "page not found" by sending visitors to the closest matching address, which for a restricted product is its own address. This version stops that. If you use WP 301 Redirects you can leave its Autoredirect 404 option switched on.
 
 == Changelog ==
+
+= 1.2.0 =
+
+Restricted products now count as not purchasable for visitors who are not allowed to buy them. Add-to-cart was already blocked for those visitors, but WooCommerce and the theme still showed a Buy Now button that did nothing when clicked. Buy buttons that check whether a product can be bought now hide themselves instead. Approved roles and shop managers see no change.
 
 = 1.1.0 =
 
