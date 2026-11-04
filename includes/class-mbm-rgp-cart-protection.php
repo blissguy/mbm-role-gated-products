@@ -24,6 +24,28 @@ final class MBM_RGP_Cart_Protection {
 		add_action( 'woocommerce_check_cart_items', array( $this, 'purge_restricted_cart_items' ) );
 		add_action( 'template_redirect', array( $this, 'block_single_product' ), 0 );
 		add_filter( 'rest_pre_dispatch', array( $this, 'block_store_api_product_read' ), 10, 3 );
+		add_filter( 'woocommerce_is_purchasable', array( $this, 'filter_is_purchasable' ), 20, 2 );
+		add_filter( 'woocommerce_variation_is_purchasable', array( $this, 'filter_is_purchasable' ), 20, 2 );
+	}
+
+	/*
+	 * Report restricted products as not purchasable to visitors who cannot buy
+	 * them. Add-to-cart is already blocked above; this makes WooCommerce, themes
+	 * and other plugins agree, so they stop rendering buy buttons that can only
+	 * fail. Variations follow their parent product's restriction.
+	 */
+	public function filter_is_purchasable( $purchasable, $product ) {
+		if ( ! $purchasable ) {
+			return $purchasable;
+		}
+
+		$product_id = $this->get_product_gate_id( $product );
+
+		if ( ! $product_id || $this->access->can_view_product( $product_id ) ) {
+			return $purchasable;
+		}
+
+		return false;
 	}
 
 	public function block_classic_add_to_cart( $passed, $product_id ) {
